@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*.ts"]
+}
