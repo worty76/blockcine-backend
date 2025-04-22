@@ -1,10 +1,10 @@
-# BookApp
+# BlockCine
 
-BookApp is a comprehensive platform for managing and exploring books, films, and recommendations. It integrates blockchain technology, AI-powered recommendations, and a user-friendly frontend built with Next.js.
+BlockCine is a comprehensive platform for managing and exploring books, films, and recommendations. It integrates blockchain technology, AI-powered recommendations, and a user-friendly frontend built with Next.js.
 
 ## Demo
 
-Check out our demo video: [BookApp Demo](https://jumpshare.com/s/JdvcvD8yO76ORIZ5B9Qn)
+Check out our demo video: [BlockCine Demo](https://jumpshare.com/s/JdvcvD8yO76ORIZ5B9Qn)
 
 ## Features
 
@@ -49,7 +49,7 @@ Check out our demo video: [BookApp Demo](https://jumpshare.com/s/JdvcvD8yO76ORIZ
 
    ```bash
    git clone https://github.com/worty76/blockcine-backend
-   cd BookApp
+   cd BlockCine
    ```
 
 2. Install dependencies for both backend and frontend:
