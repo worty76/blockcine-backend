@@ -58,7 +58,8 @@ const login = async (req: Request, res: Response): Promise<void> => {
     if (passwordMatch) {
       const token: string = createToken(user._id.toString());
       const userId: string = user._id.toString();
-      res.status(200).send({ token, userId });
+      const isAdmin: boolean = user.isAdmin || false;
+      res.status(200).send({ token, userId, isAdmin });
     } else {
       res.status(401).send({
         message: "Incorrect password",
