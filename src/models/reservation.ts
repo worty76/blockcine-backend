@@ -2,7 +2,9 @@ import mongoose, { Schema, Document } from "mongoose";
 
 // Define the interface for Reservation
 export interface IReservation extends Document {
-  userId: string;
+  userId:
+    | string
+    | { _id: string; name?: string; avatar?: string; email?: string };
   filmId: string | { _id: string; name?: string; img?: string }; // Match film model structure
   seatNumber: number;
   verified: boolean;
@@ -13,7 +15,7 @@ export interface IReservation extends Document {
 
 // Create the schema
 const reservationSchema = new Schema<IReservation>({
-  userId: { type: String, required: true },
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   filmId: {
     type: Schema.Types.ObjectId,
     ref: "Film", // Reference to Film model
