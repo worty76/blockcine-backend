@@ -8,6 +8,7 @@ import filmRoute from "./src/routes/filmRoute";
 import authRoute from "./src/routes/authRoute";
 import reservationRoute from "./src/routes/reservationRoute";
 import recommendationRoute from "./src/routes/recommendationRoute";
+import statsRoute from "./src/routes/statisticRoute";
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use("/api/film", filmRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/reservations", reservationRoute);
 app.use("/api/recommendations", recommendationRoute);
+app.use("/api/statistics", statsRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Express & TypeScript Server");
