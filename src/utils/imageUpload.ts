@@ -5,7 +5,7 @@ export const uploadToCloudinary = async (filePath: string): Promise<string> => {
   try {
     // Upload the image
     const result = await cloudinary.uploader.upload(filePath, {
-      folder: "user_avatars",
+      folder: "images",
       use_filename: true,
       unique_filename: true,
     });
