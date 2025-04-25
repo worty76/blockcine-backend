@@ -6,7 +6,16 @@ import ethereumService from "../services/ethereumService";
 // Create a new reservation
 const createReservation = async (req: Request, res: Response) => {
   try {
-    const { userId, filmId, seatNumber, blockchainVerified } = req.body;
+    const {
+      userId,
+      filmId,
+      seatNumber,
+      blockchainVerified,
+      walletAddress,
+      blockIndex,
+      transactionHash,
+      paymentMethod,
+    } = req.body;
 
     // Check if seat is already reserved
     const existingReservation = await Reservation.findOne({
@@ -27,6 +36,7 @@ const createReservation = async (req: Request, res: Response) => {
       ? undefined
       : new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
 
+    // Create the reservation with basic properties
     const reservation = new Reservation({
       userId,
       filmId,
@@ -35,12 +45,50 @@ const createReservation = async (req: Request, res: Response) => {
       expiresAt: expiresAt,
     });
 
-    // If this reservation was already verified on blockchain, record it
+    // If this reservation was already verified on blockchain, record the additional details
     if (blockchainVerified) {
       reservation.verified = true;
+
+      // Add blockchain transaction details if provided
+      if (blockIndex) {
+        reservation.blockIndex = blockIndex;
+      }
+
+      if (walletAddress) {
+        // @ts-ignore - Add this property to the schema if not already defined
+        reservation.walletAddress = walletAddress;
+      }
+
+      if (transactionHash) {
+        // @ts-ignore - Add this property to the schema if not already defined
+        reservation.transactionHash = transactionHash;
+      }
+
+      if (paymentMethod) {
+        // @ts-ignore - Add this property to the schema if not already defined
+        reservation.paymentMethod = paymentMethod;
+      }
+
+      console.log("Created blockchain-verified reservation:", {
+        userId,
+        filmId,
+        seatNumber,
+        blockIndex,
+        walletAddress: walletAddress
+          ? `${walletAddress.substring(0, 6)}...${walletAddress.substring(
+              walletAddress.length - 4
+            )}`
+          : undefined,
+        transactionHash: transactionHash
+          ? `${transactionHash.substring(0, 10)}...`
+          : undefined,
+      });
     }
 
     await reservation.save();
+    console.log(
+      `Reservation created successfully. Verified: ${reservation.verified}`
+    );
 
     // Return the saved reservation
     res.status(201).json(reservation);
@@ -189,6 +237,9 @@ const processPayment = async (req: Request, res: Response) => {
     const { reservationId } = req.params;
     const { paymentDetails } = req.body;
 
+    console.log("Processing payment for reservation:", reservationId);
+    console.log("Payment details:", paymentDetails);
+
     // Find the reservation
     const reservation = await Reservation.findById(reservationId);
 
@@ -223,8 +274,35 @@ const processPayment = async (req: Request, res: Response) => {
       reservation.verified = true;
       reservation.expiresAt = null as any; // Set to null instead of undefined, with type assertion
 
+      // Store blockchain data if it's a blockchain payment
+      if (paymentDetails && paymentDetails.paymentMethod === "blockchain") {
+        if (paymentDetails.blockIndex) {
+          reservation.blockIndex = paymentDetails.blockIndex;
+        }
+
+        if (paymentDetails.walletAddress) {
+          // @ts-ignore - We'll add this field to the model schema if not already there
+          reservation.walletAddress = paymentDetails.walletAddress;
+        }
+
+        if (paymentDetails.transactionHash) {
+          // @ts-ignore - We'll add this field to the model schema if not already there
+          reservation.transactionHash = paymentDetails.transactionHash;
+        }
+
+        if (paymentDetails.amount) {
+          // @ts-ignore - We'll add this field to the model schema if not already there
+          reservation.paymentAmount = paymentDetails.amount;
+        }
+
+        // @ts-ignore - We'll add this field to the model schema if not already there
+        reservation.paymentMethod = "blockchain";
+      }
+
       // Save updated reservation
       await reservation.save();
+
+      console.log("Reservation updated successfully:", reservation);
 
       // Return success
       return res.status(200).json({
